@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project 1 Freja Kahle</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>    
+    
+    <button id="equSwitch">Show/Hide Equation Line</button>
+    <svg id="chart" class="hide-equ"></svg>
+
+    <div id="switch-disp" class="elthsp">
+        <svg id="hist-elthsp" class="elthsp"></svg>
+        <svg id="hist-mhi" class="mhi"></svg>
+        <div id="map-elthsp" class="elthsp"></div>
+        <div id="map-mhi" class="mhi"></div>
+    </div>
+
+    <svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="lightstripe" patternUnits="userSpaceOnUse" width="5" height="5"> <image style="filter: invert(85%);" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgogIDxyZWN0IHdpZHRoPSc1JyBoZWlnaHQ9JzUnIGZpbGw9J3doaXRlJy8+CiAgPHBhdGggZD0nTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVonIHN0cm9rZT0nIzg4OCcgc3Ryb2tlLXdpZHRoPScxJy8+Cjwvc3ZnPg==" x="0" y="0" width="5" height="5"> </image> </pattern> </defs></svg>
+
+    <input type="range" orient="vertical" min="1" max="4" step="1" id="cutOutliersSlider" style="height:200px;"/>
+    <input type="range" orient="vertical" min="5" max="60" step="5" value="30" id="histogramBinsSlider" style="height:200px;"/>
+    <button id="dataSwitch">Switch data shown</button>
+    <button id="highlightSwitch">Start Highlighting</button>
+
+    <div id="tooltip"></div>
+
+    <script src="js/d3.v6.min.js"></script>
+    <script src="js/topojson.v3.js"></script>
+    
+    <script src="js/histogram.js"></script>
+    <script src="js/scatterPoints.js"></script>
+
+    <script src="js/choroplethMap.js"></script>
+
+    <script src="js/main.js"></script>
+
+</body>
+</html>

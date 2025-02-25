@@ -1,0 +1,36 @@
+/* Tooltip */
+:root {
+    background-color: #333;
+    color: #ddd;
+}
+
+#tooltip {
+    position: absolute;
+    display: none;
+    background: #333;
+    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
+    border: 1px solid #ddd;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px;
+    min-width: 160px;
+  }
+  .tooltip-title {
+    color: #ddd;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  #tooltip ul {
+    margin: 5px 0 0 0;
+    padding-left: 20px;
+  }
+
+#switch-disp.elthsp .mhi {
+    display: none;
+}
+#switch-disp.mhi .elthsp {
+    display: none;
+}
+.hide-equ .equline {
+    display: none;
+}
