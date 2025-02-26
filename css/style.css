@@ -108,7 +108,7 @@ button {
   background: #ffffff08;
   color: #ddd;
   transition: all 0.2s ease;
-  border-radius: 0.75em;
+  border-radius: 0.35em;
   font-size: 0.8vw;
 }
 button:hover {
