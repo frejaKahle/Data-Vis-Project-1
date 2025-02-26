@@ -97,6 +97,7 @@ class Histogram {
             .attr('y', 57)
             .attr('text-anchor','middle')
             .attr('fill','#ddd')
+            .attr('font-size',20)
             .attr('alignment-baseline','middle')
             .text('Confirm Selection');
         vis.hlbtn = vis.chart.append('rect')

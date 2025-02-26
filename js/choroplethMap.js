@@ -92,6 +92,7 @@ class ChoroplethMap {
     vis.legendTitle = vis.legend.append('text')
         .attr('class', 'legend-title')
         .attr('dy', '.35em')
+        .attr('font-size',16)
         .attr('y', -10)
         .text(vis.config.dataDisplayName)
         .attr('fill','#ddd')
@@ -100,6 +101,7 @@ class ChoroplethMap {
         .attr('y', 57)
         .attr('text-anchor','middle')
         .attr('fill','#ddd')
+        .attr('font-size',20)
         .attr('alignment-baseline','middle')
         .text('Confirm Selection');
     vis.hlbtn = vis.chart.append('rect')
@@ -212,6 +214,7 @@ class ChoroplethMap {
         .attr('dy', '.35em')
         .attr('y', 20)
         .attr('fill','#ddd')
+        .attr('font-size',12)
         .attr('x', (d,index) => {
           return index == 0 ? 0 : vis.config.legendRectWidth;
         })

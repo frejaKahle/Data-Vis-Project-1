@@ -9,7 +9,7 @@
 body {
   display: flex;
   flex-direction: column;
-  padding: 5vw 25vw 200px 25vw;
+  padding: 5vw 25vw 200px 15vw;
 }
 body>button {
   flex: 0;
@@ -99,6 +99,9 @@ nav a {
   right:7.5vw;
   width: 15vw;
   transform: translate(0,50%);
+}
+.floating-menu th>* {
+  margin: 0 0.5vw;
 }
 
 button {
