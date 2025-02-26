@@ -1,3 +1,14 @@
+var mouseDown = 0;
+var unhighlighting = 0;
+document.body.onmousedown = function() { 
+    ++mouseDown;
+  }
+  document.body.onmouseup = function() {
+    --mouseDown;
+    if (unhighlighting ==1) {
+        unhighlighting = 0;
+    }
+  }
 class ChoroplethMap {
 
   /**
@@ -24,7 +35,11 @@ class ChoroplethMap {
     }
     this.data = _data;
     this.accessor = _acc;
+  
+    this.highlighting = [];
     this.highlighted = [];
+    this.highlight = d => null;
+
     this.initVis();
   }
   
@@ -40,8 +55,9 @@ class ChoroplethMap {
 
     // Define size of SVG drawing area
     vis.svg = d3.select(vis.config.parentElement).append('svg')
-        .attr('width', vis.config.containerWidth)
-        .attr('height', vis.config.containerHeight);
+      .attr('viewBox',`0 0 ${vis.config.containerWidth} ${vis.config.containerHeight}`)
+      .attr('width','100%');
+
 
     // Append group element that will contain our actual chart 
     // and position it according to the given margin config
@@ -79,7 +95,22 @@ class ChoroplethMap {
         .attr('y', -10)
         .text(vis.config.dataDisplayName)
         .attr('fill','#ddd')
-
+    vis.chart.append('text')
+        .attr('x',800-vis.config.margin.right)
+        .attr('y', 57)
+        .attr('text-anchor','middle')
+        .attr('fill','#ddd')
+        .attr('alignment-baseline','middle')
+        .text('Confirm Selection');
+    vis.hlbtn = vis.chart.append('rect')
+        .attr('fill','#ffffff05')
+        .attr('width',200)
+        .attr('height',100)
+        .attr('id','hlbtn')
+        .attr('x',700 - vis.config.margin.right -1)
+        .attr('stroke','#ddd')
+        .attr('stroke-width',2)
+        .on('click', event => vis.highlight(vis));
     vis.updateVis();
   }
 
@@ -90,6 +121,9 @@ class ChoroplethMap {
       let m = d3.mean(cData,vis.accessor);
       let s = d3.deviation(cData,vis.accessor);
       cData = cData.filter(d => Math.abs(vis.accessor(d) - m) <= (vis.config.cutOutliers * s))
+    }
+    if(vis.highlighted.length > 0) {
+      cData = cData.filter(d => vis.highlighted.includes(d.id));
     }
     const dataExtent = d3.extent(cData, vis.accessor);
     
@@ -111,7 +145,6 @@ class ChoroplethMap {
 
     // Convert compressed TopoJSON to GeoJSON format
     const counties = topojson.feature(vis.data, vis.data.objects.counties)
-    console.log(counties);
 
     // Defines the scale of the projection so that the geometry fits within the SVG area
     vis.projection.fitSize([vis.width, vis.height], counties);
@@ -123,9 +156,9 @@ class ChoroplethMap {
         .attr('class', 'county')
         .attr('d', vis.geoPath)
         .attr('stroke', '#ddd')
-        .attr('stroke-width',d => vis.highlighted.length > 0 ? vis.highlighted.includes(d.id) ? '1.5' : '0' : '0')
+        .attr('stroke-width',d => 0.1)
         .attr('fill', d => {
-          if (vis.accessor(d) && vis.accessor(d) <= vis.colorScale.domain()[1] && vis.accessor(d) >= vis.colorScale.domain()[0])// && (vis.highlighted.length > 0 ? vis.highlighted.includes(d.id) : true))
+          if (vis.accessor(d) && vis.accessor(d) <= vis.colorScale.domain()[1] && vis.accessor(d) >= vis.colorScale.domain()[0] && (vis.highlighted.length > 0 ? vis.highlighted.includes(d.id) : true))
             {
             return vis.colorScale(vis.accessor(d));
           } else {
@@ -134,7 +167,28 @@ class ChoroplethMap {
         });
 
     countyPath
+        .on('mousedown', (event,d) => {
+          if(vis.highlighting.includes(d.id)) {
+              ++unhighlighting;
+              vis.highlighting = vis.highlighting.filter(e => e != d.id)
+              event.srcElement.classList.remove('highlighted');
+          }
+          else {
+              vis.highlighting.push(d.id);
+              event.srcElement.classList.add('highlighted');
+          }
+        })  
         .on('mousemove', (event,d) => {
+          if (mouseDown == 1) {
+            if (unhighlighting == 1) {
+                vis.highlighting = vis.highlighting.filter(e => e != d.id);
+                event.srcElement.classList.remove('highlighted');
+            }
+            else if (!vis.highlighting.includes(d.id)){
+                vis.highlighting.push(d.id);
+                event.srcElement.classList.add('highlighted');
+            }
+          }
           const point = vis.accessor(d) ? `<strong>${vis.config.dataPrefix}${vis.accessor(d)}</strong> ${vis.config.dataDisplayName}` : 'No data available'; 
           d3.select('#tooltip')
             .style('display', 'block')

@@ -1,30 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Project 1 Freja Kahle</title>
+    <title>Data Vis Project 1 Freja Kahle</title>
     <meta charset="UTF-8">
     <link rel="icon" href="data:;base64,iVBORwOKGO=" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.png">
 </head>
 <body>    
-    
-    <button id="equSwitch">Show/Hide Equation Line</button>
+    <nav>
+        <ul>
+            <li><a href="https://frejakahle.github.io/portfolio/#home">Home</a></li>
+            <li><a href="https://github.com/frejaKahle" target="_blank">Github</a></li>
+        </ul>
+    </nav>
+    <h1 style="margin-bottom: 0;">Comparing Education with Income</h1>
+    <p>This visualization is made for comparing metrics on education and income. I found the correlation to be lower than I had originally expected, which is insightful in its own right. Feel free to play around with it and see if you can find anything interesting.<br> Side note: the 'Cut Outliers' slider does not affect the scatter plot, highlighting will.</p><h4 style="text-align: right; margin-top: 0.2Z5vh;">- Freja</h4>
+    <h2>County Population % With Less Than High School Degree over Median Household Income</h2>
+    <button id="equSwitch">Show/Hide 'Best Fit' Line</button><br>
     <svg id="chart" class="hide-equ"></svg>
+    <hl>
 
     <div id="switch-disp" class="elthsp">
+        <h2 class="elthsp">Frequency of Population % With Less Than High School Degree</h2>
+        <h2 class="mhi">Frequency of Median Household Income</h2>
+        <p style="font-size: 0.8vw; opacity: 0.8;">Use the menu on the right to switch which attribute is displayed, click and drag to highlight.</p>
         <svg id="hist-elthsp" class="elthsp"></svg>
         <svg id="hist-mhi" class="mhi"></svg>
+        <h2>County Data Map: <span class="elthsp">Population % With Less Than High School Degree</span><span class="mhi">Median Household Income</span></h2>
+        <p style="font-size: 0.8vw; opacity: 0.8;">Use the menu on the right to switch which attribute is displayed, click and drag to highlight.</p>
         <div id="map-elthsp" class="elthsp"></div>
         <div id="map-mhi" class="mhi"></div>
     </div>
 
     <svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="lightstripe" patternUnits="userSpaceOnUse" width="5" height="5"> <image style="filter: invert(85%);" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgogIDxyZWN0IHdpZHRoPSc1JyBoZWlnaHQ9JzUnIGZpbGw9J3doaXRlJy8+CiAgPHBhdGggZD0nTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVonIHN0cm9rZT0nIzg4OCcgc3Ryb2tlLXdpZHRoPScxJy8+Cjwvc3ZnPg==" x="0" y="0" width="5" height="5"> </image> </pattern> </defs></svg>
 
-    <input type="range" orient="vertical" min="1" max="4" step="1" id="cutOutliersSlider" style="height:200px;"/>
-    <input type="range" orient="vertical" min="5" max="60" step="5" value="30" id="histogramBinsSlider" style="height:200px;"/>
-    <button id="dataSwitch">Switch data shown</button>
-    <button id="highlightSwitch">Start Highlighting</button>
-
+    <div class="floating-menu">
+        <table>
+            <tr>
+                <th><h3>Cut Ouliers</h3></th>
+                <th><h3># of bins</h3></th>
+            </tr><tr>
+                <th><input type="range" orient="vertical" min="1" max="5" step="1" id="cutOutliersSlider" style="height:200px;"/></th>
+                <th><input type="range" orient="vertical" min="5" max="60" step="5" value="30" id="histogramBinsSlider" style="height:200px;"/></th>
+            </tr><tr>
+                <th><button id="dataSwitch">Switch data shown</button></th>
+                <th><button id="highlightClear">Clear Highlighting</button></th>
+            </tr>
+        </table>
+    </div>
     <div id="tooltip"></div>
 
     <script src="js/d3.v6.min.js"></script>

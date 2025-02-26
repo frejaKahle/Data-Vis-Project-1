@@ -2,7 +2,7 @@ console.log("Hello world");
 let data, timelineCircles;
 
 const mhiColor = '#80b810';
-const elthspColor = '#ff5810';
+const elthspColor = '#ee4810';
 
 function equ (x) {
   return 420000 / (x - 23001)
@@ -35,7 +35,7 @@ Promise.all([
 			'parentElement': '#hist-elthsp',
       'dataTypeDisplayName':'Percentage of Population with less than high school degree',
       'color': elthspColor,
-			'containerHeight': 700,
+			'containerHeight': 500,
 			'containerWidth': 900,
       'bins': 30,
       'dataSuffix' : '%'
@@ -44,7 +44,7 @@ Promise.all([
 			'parentElement': '#hist-mhi',
       'dataTypeDisplayName':'Median Individual Income',
       'color': mhiColor,
-			'containerHeight': 700,
+			'containerHeight': 500,
 			'containerWidth': 900,
       'bins': 30,
       'dataPrefix' : '$'
@@ -53,7 +53,7 @@ Promise.all([
   	// Create an instance (for example in main.js)
 		const scatterPoints = new ScatterPoints({
 			'parentElement': '#chart',
-			'containerHeight': 576,
+			'containerHeight': 500,
 			'containerWidth': 900
 		}, data, equ);
 
@@ -76,6 +76,9 @@ Promise.all([
       'dataPrefix':'$'
     }, geoData, d => d.properties.mhi);
 
+
+
+
     const cutOutliersSlider = document.getElementById('cutOutliersSlider');
     cutOutliersSlider.value = cutOutliersSlider.max;
     cutOutliersSlider.onmouseup = function() {
@@ -87,13 +90,15 @@ Promise.all([
     cutOutliersSlider.onmousemove = function() {
       d3.select('#tooltip')
         .style('display', 'block')
-        .style('left', (event.pageX + 20) + 'px')   
-        .style('top', (event.pageY - 15) + 'px')
+        .style('position','absolute')
+        .style('left', (event.pageX - 20) + 'px')  
+        .style('top', (event.pageY) + 'px')
+        .style('transform',' translate(-100%,-50%)') 
         .html(this.value < this.max ? `Cutting data past ${this.value} standard deviation${this.value == 1 ? '' : 's'}.` : `Not cutting data.`);
     }
     
     cutOutliersSlider.onmouseleave =  function() {
-      d3.select('#tooltip').style('display', 'none');
+      d3.select('#tooltip').style('display', 'none').style('position',null).style('transform',null);
     }
     const dataSwitch = document.getElementById('dataSwitch');
     const switchDisp = document.getElementById('switch-disp');
@@ -117,13 +122,15 @@ Promise.all([
     histBinsSlider.onmousemove = function() {
       d3.select('#tooltip')
         .style('display', 'block')
-        .style('left', (event.pageX + 20) + 'px')   
-        .style('top', (event.pageY - 15) + 'px')
+        .style('position','absolute')
+        .style('left', (event.pageX - 20) + 'px')  
+        .style('top', (event.pageY) + 'px')
+        .style('transform',' translate(-100%,-50%)') 
         .html(`Target number of bins: ${this.value}`);
     }
     
     histBinsSlider.onmouseleave =  function() {
-      d3.select('#tooltip').style('display', 'none');
+      d3.select('#tooltip').style('display', 'none').style('position',null).style('transform',null);
     }
     const equSwitch = document.getElementById('equSwitch');
     const scatter = document.getElementById('chart');
@@ -135,23 +142,30 @@ Promise.all([
         scatter.classList.add('hide-equ');
       }
     }
-    const highlightSwitch = document.getElementById('highlightSwitch');
-    highlightSwitch.onclick = function() {
-      if (highlightSwitch.classList.contains('highlighting')){
-        let highlight = [];
-        [histElthsp,histMhi].forEach(function(vis) {vis.highlighting = false; highlight = highlight.concat(vis.highlighted);});
-        console.log(highlight);
-        [scatterPoints, choroplethMapElthsp, choroplethMapMhi].forEach(function(vis) {vis.highlighted = highlight; vis.updateVis();});
-        highlightSwitch.classList.remove('highlighting');
-        highlightSwitch.innerText = "Start Highlighting";
+
+
+
+    const highlightClear = document.getElementById('highlightClear');
+    highlightClear.onclick = function() {
+        [scatterPoints, choroplethMapElthsp, choroplethMapMhi, histElthsp, histMhi].forEach(function(vis) {
+          vis.highlighted = []; vis.updateVis();
+        });
       }
-      else {
-        [histElthsp,histMhi].forEach(function(vis) {vis.highlighting = true; vis.highlighted = [];})
-        highlightSwitch.classList.add('highlighting');
-        highlightSwitch.innerText = "Stop Highlighting";
-      }
-    }
-}).catch(error => {
+    const highlightConfirmation = function(vis) {
+      if (vis.highlighting.length > 0) {
+        vis.highlighted = vis.highlighting;
+        vis.updateVis();
+        vis.chart.selectAll('rect').attr('class',null);
+        [scatterPoints,histElthsp,histMhi,choroplethMapElthsp,choroplethMapMhi].filter(v => v != vis).forEach(v => {
+          v.highlighted = vis.highlighting;
+          v.updateVis();
+          v.highlighting = [];
+          v.chart.selectAll('rect').attr('class',null);
+        });
+        vis.highlighting = [];
+    }};
+    [histElthsp,histMhi,choroplethMapElthsp,choroplethMapMhi].forEach(vis => vis.highlight = highlightConfirmation);
+    }).catch(error => {
     console.error('Error:');
     console.log(error);
 });

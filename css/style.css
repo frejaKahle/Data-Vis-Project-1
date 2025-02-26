@@ -1,8 +1,54 @@
-/* Tooltip */
+
 :root {
-    background-color: #333;
+    background-color: rgb(32, 36, 36);
     color: #ddd;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1vw;
 }
+
+body {
+  display: flex;
+  flex-direction: column;
+  padding: 5vw 25vw 200px 25vw;
+}
+body>button {
+  flex: 0;
+}
+
+nav {
+  height: 5vw;
+  width:100vw;
+  background: rgb(32, 36, 36);
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  left: 0;
+  top: 0;
+  justify-content: center;
+  box-shadow: 0 0 5px black;
+  z-index: 500;
+  align-items: center;
+}
+nav ul {
+  height: 100%;
+}
+nav li {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+nav a {
+  font-size: 1.2vw;
+  font-weight: 500;
+  color: #ddd;
+  text-decoration: none;
+  height: 100%;
+  padding: 0 1vw;
+  line-height: 5vw;
+}
+
 
 #tooltip {
     position: absolute;
@@ -10,14 +56,14 @@
     background: #333;
     box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
     border: 1px solid #ddd;
-    font-size: 12px;
     font-weight: 500;
+    font-size: 0.8vw;
     padding: 8px;
     min-width: 160px;
   }
   .tooltip-title {
     color: #ddd;
-    font-size: 14px;
+    font-size: 1vw;
     font-weight: 600;
   }
   #tooltip ul {
@@ -33,4 +79,34 @@
 }
 .hide-equ .equline {
     display: none;
+}
+.mhi .highlighted {
+  filter: brightness(1.5);
+}
+.elthsp .highlighted {
+  filter: brightness(2) hue-rotate(-1deg);
+}
+#hlbtn {
+  transition: all 0.2s ease;
+}
+#hlbtn:hover {
+  fill: #ffffff18;
+}
+
+.floating-menu {
+  position: fixed;
+  bottom:50vh;
+  right:7.5vw;
+  width: 15vw;
+  transform: translate(0,50%);
+}
+
+button {
+  background: #ffffff08;
+  color: #ddd;
+  transition: all 0.2s ease;
+  border-radius: 0.75em;
+}
+button:hover {
+  background: #ffffff10;
 }

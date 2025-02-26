@@ -5,7 +5,7 @@ class ScatterPoints {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
       containerHeight: _config.containerHeight || 140,
-      margin: {top: 20, right: 20, bottom: 20, left: 20},
+      margin: {top: 20, right: 20, bottom: 20, left: 30},
       tooltipPadding: _config.tooltipPadding || 15
     }
 
@@ -37,8 +37,8 @@ class ScatterPoints {
       // Define 'svg' as a child-element (g) from the drawing area and include spaces
       // Add <svg> element (drawing space)
       vis.svg = d3.select(vis.config.parentElement)
-          .attr('width', vis.config.containerWidth)
-          .attr('height', vis.config.containerHeight)
+      .attr('viewBox',`0 0 ${vis.config.containerWidth} ${vis.config.containerHeight}`)
+      .attr('width','100%');
 
       vis.chart = vis.svg.append('g')
           .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`);
@@ -54,8 +54,8 @@ class ScatterPoints {
         .range([vis.height,0]);
 
         // Initialize axes
-        vis.xAxis = d3.axisBottom(vis.xScale);
-        vis.yAxis = d3.axisLeft(vis.yScale);
+        vis.xAxis = d3.axisBottom(vis.xScale).tickFormat(e => `$${e}`);
+        vis.yAxis = d3.axisLeft(vis.yScale).tickFormat(e => `${e}%`);
 
 
         // Draw the axis
@@ -83,6 +83,7 @@ class ScatterPoints {
           .attr('fill', 'none')
           .attr('stroke','red')
           .attr('class','equline')
+          .attr('opacity','0.7')
           .attr('stroke-width', 2)
           .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`)
           .on('mousemove', (event,d) => {
@@ -139,7 +140,7 @@ class ScatterPoints {
               <ul>
                 <li>${d.display_name}</li>
                 <li>${d.elthsp}% less than high school degree</li>
-                <li>${d.mhi} median income</li>
+                <li>$${d.mhi} median income</li>
               </ul>
             `);
         })

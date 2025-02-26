@@ -1,5 +1,5 @@
-let mouseDown = 0;
-let unhighlighting = 0;
+var mouseDown = 0;
+var unhighlighting = 0;
 document.body.onmousedown = function() { 
     ++mouseDown;
   }
@@ -28,8 +28,10 @@ class Histogram {
   
       this.data = _data;
       this.accessor = _acc;
-      this.highlighting = false;
+
+      this.highlighting = [];
       this.highlighted = [];
+      this.highlight = d => null;
 
       this.initVis();
     }
@@ -53,8 +55,8 @@ class Histogram {
         // Define 'svg' as a child-element (g) from the drawing area and include spaces
         // Add <svg> element (drawing space)
         vis.svg = d3.select(vis.config.parentElement)
-            .attr('width', vis.config.containerWidth)
-            .attr('height', vis.config.containerHeight)
+        .attr('viewBox',`0 0 ${vis.config.containerWidth} ${vis.config.containerHeight}`)
+        .attr('width','100%');
   
         vis.chart = vis.svg.append('g')
             .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`);
@@ -77,7 +79,7 @@ class Histogram {
 
   
         // Initialize axes
-        vis.xAxis = d3.axisBottom(vis.xScale);
+        vis.xAxis = d3.axisBottom(vis.xScale).tickFormat(e => `${vis.config.dataPrefix}${e}${vis.config.dataSuffix}`);
         vis.yAxis = d3.axisLeft(vis.yScale);
 
         // Draw the axis
@@ -90,7 +92,23 @@ class Histogram {
         .attr('class', 'axis y-axis')
         .call(vis.yAxis);
         
-
+        vis.chart.append('text')
+            .attr('x',800-vis.config.margin.right)
+            .attr('y', 57)
+            .attr('text-anchor','middle')
+            .attr('fill','#ddd')
+            .attr('alignment-baseline','middle')
+            .text('Confirm Selection');
+        vis.hlbtn = vis.chart.append('rect')
+            .attr('fill','#ffffff05')
+            .attr('width',200)
+            .attr('height',100)
+            .attr('id','hlbtn')
+            .attr('x',700 - vis.config.margin.right -1)
+            .attr('stroke','#ddd')
+            .attr('stroke-width',2)
+            .on('click', event => vis.highlight(vis));
+        
         
         vis.updateVis(); //call updateVis() at the end - we aren't using this yet. 
     }
@@ -102,6 +120,10 @@ updateVis() {
         let s = d3.deviation(cData,vis.accessor);
         cData = cData.filter(d => Math.abs(vis.accessor(d) - m) <= (vis.config.cutOutliers * s))
       }
+    console.log(cData);
+    if (vis.highlighted.length > 0) {
+        cData = cData.filter(d => vis.highlighted.includes(d.cnty_fips))
+    }
 
     vis.xScale.domain(d3.extent(cData, vis.accessor)).range([0, vis.width]).nice();
         
@@ -118,37 +140,47 @@ updateVis() {
     vis.chart.select('.axis.y-axis').call(vis.yAxis);
 
     vis.rects = vis.chart.selectAll('rect')
+        .filter(':not(#hlbtn)')
         .data(vis.bins)
         .join('rect')
         .attr('fill', vis.config.color )
         .attr('stroke', '#ddd')
         .attr('stroke-width', 1)
-        .attr('x', 0)
+        .attr('x', 1)
         .attr('width', d => vis.xScale(d.x1) - vis.xScale(d.x0) )
-        .attr("transform", d => `translate(${vis.xScale(d.x0)}, ${vis.height - vis.yScale(d.length) + 1})`)
+        .attr("transform", d => `translate(${vis.xScale(d.x0)}, ${vis.height - vis.yScale(d.length)})`)
         .attr('height', d => vis.yScale(d.length));
 
     vis.rects
         .on('mousedown', (event,d) => {
-            if(vis.highlighting && vis.highlighted.includes(d.cnty_fips)){
+            console.log(d);
+            if(d.length > 0 && vis.highlighting.includes(d[0].cnty_fips)) {
                 ++unhighlighting;
                 let aid = [];
                 d.forEach(c => {aid.push(c.cnty_fips)});
-                vis.highlighted.filter(e => !aid.includes(e));
+                vis.highlighting = vis.highlighting.filter(e => !aid.includes(e));
+                event.srcElement.classList.remove('highlighted');
+            }
+            else {
+                d.forEach(e => vis.highlighting.push(e.cnty_fips));
+                event.srcElement.classList.add('highlighted');
             }
         })
         .on('mousemove', (event,d) => {
             //console.log("mouse over! ");
             //console.log(event);
             //console.log(d);
-        if (vis.highlighting && mouseDown == 1) {
+        if (mouseDown == 1) {
             let aid = [];
             d.forEach(c => {aid.push(c.cnty_fips)});
             if (unhighlighting == 1) {
-                vis.highlighted.filter(e => !aid.includes(e));
+                vis.highlighting = vis.highlighting.filter(e => !aid.includes(e));
+                event.srcElement.classList.remove('highlighted');
             }
-            else if (d.length > 0 && !vis.highlighted.includes(d[0].cnty_fips)){
-                aid.forEach(e => vis.highlighted.push(e));
+            else if (d.length > 0 && !vis.highlighting.includes(d[0].cnty_fips)){
+                
+                d.forEach(e => vis.highlighting.push(e.cnty_fips));
+                event.srcElement.classList.add('highlighted');
             }
         }
         d3.select('#tooltip')
