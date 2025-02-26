@@ -96,7 +96,7 @@ nav a {
 .floating-menu {
   position: fixed;
   bottom:50vh;
-  right:7.5vw;
+  right:5vw;
   width: 15vw;
   transform: translate(0,50%);
 }
